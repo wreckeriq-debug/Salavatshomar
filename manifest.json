@@ -1,0 +1,16 @@
+{
+  "name": "صلوات‌شمار معنوی",
+  "short_name": "صلوات‌شمار",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "https://www.pwabuilder.com/assets/icons/pwa-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
