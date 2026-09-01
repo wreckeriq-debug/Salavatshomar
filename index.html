@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صلوات‌شمار معنوی سه‌بعدی پیشرفته</title>
+    <!-- فونت‌های لاله‌زار و وزیرمتن -->
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Vazirmatn:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #0d0d0d;
+            --panel-bg: #141414;
+            --accent-color: #d4af37;
+            --btn-shadow: #8c6e18;
+            --btn-gradient: linear-gradient(145deg, #e6c547, #b89322);
+            --touch-blue: #1d4ed8;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1c1c1c 0%, var(--primary-bg) 100%);
+            color: #f3e5ab;
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            user-select: none;
+            transition: background 0.4s ease;
+            position: relative;
+        }
+
+        /* افکت اسکن نورانی از بالا به پایین هنگام تغییر تم */
+        .scan-overlay {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--accent-color), transparent);
+            opacity: 0.4;
+            pointer-events: none;
+            transition: none;
+            z-index: 5;
+        }
+        .scan-active {
+            animation: scanDown 0.6s ease-in-out forwards;
+        }
+        @keyframes scanDown {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+
+        /* حالت فعال‌سازی محدوده لمس گسترده */
+        body.expanded-touch {
+            background: radial-gradient(circle at center, #0f2b46 0%, #06111a 100%);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 90%;
+            max-width: 340px;
+            background: var(--panel-bg);
+            padding: 16px 20px;
+            border-radius: 28px;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), inset 0 2px 5px rgba(255, 255, 255, 0.08);
+            position: relative;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .container.wide-touch {
+            border-color: #60a5fa;
+            box-shadow: 0 0 35px rgba(59, 130, 246, 0.4), inset 0 0 15px rgba(59, 130, 246, 0.3);
+            background: #0d1b2a;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .header-title {
+            font-family: 'Lalezar', Tahoma, sans-serif;
+            font-size: 20px;
+            color: var(--accent-color);
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+            margin: 0 auto;
+        }
+
+        .gear-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--accent-color);
+            position: absolute;
+            left: 0;
+            transition: transform 0.3s;
+        }
+        .gear-btn:active {
+            transform: rotate(90deg);
+        }
+
+        .color-panel {
+            display: none;
+            position: absolute;
+            top: 40px;
+            left: 0;
+            background: #1f1f1f;
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 8px;
+            gap: 6px;
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
+        }
+        .color-panel.show {
+            display: flex;
+        }
+        .color-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #181818, #0f0f0f);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 6px 10px;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.8);
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 11px;
+            color: var(--accent-color);
+            font-weight: 700;
+        }
+
+        .card p {
+            margin: 2px 0 0 0;
+            font-size: 13px;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .target-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            background: #111;
+            padding: 4px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .target-box input {
+            background: #000;
+            border: 1px solid var(--accent-color);
+            color: #f3e5ab;
+            font-family: 'Vazirmatn';
+            border-radius: 6px;
+            width: 55px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 2px;
+        }
+
+        .counter-display {
+            font-family: 'Lalezar', Tahoma, sans-serif;
+            font-size: 50px;
+            font-weight: bold;
+            color: var(--accent-color);
+            background: #050505;
+            border: 3px solid #2a2a2a;
+            border-radius: 16px;
+            width: 130px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 8px 15px rgba(0,0,0,0.9), 0 4px 10px rgba(0,0,0,0.5);
+            letter-spacing: 2px;
+        }
+
+        /* دکمه اصلی شمارش سه‌بعدی */
+        .btn-count {
+            background: var(--btn-gradient);
+            color: #111;
+            border: none;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            font-family: 'Lalezar', Tahoma, sans-serif;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 7px 0 var(--btn-shadow), 0 10px 20px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.05s ease;
+            outline: none;
+            margin: 2px 0;
+        }
+
+        .btn-count:active {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0 var(--btn-shadow), 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        /* دکمه منفی کوچک برای کم کردن در صورت اشتباه */
+        .btn-minus {
+            position: absolute;
+            left: 20px;
+            bottom: 75px;
+            background: #2a1212;
+            color: #f87171;
+            border: 1px solid #f87171;
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+        }
+        .btn-minus:active {
+            transform: scale(0.9);
+        }
+
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 5px;
+        }
+
+        .btn-small {
+            background: linear-gradient(145deg, #1c1c1c, #111);
+            color: var(--accent-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 6px 2px;
+            font-family: 'Vazirmatn';
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+            transition: 0.1s;
+        }
+
+        .btn-small:active {
+            transform: scale(0.95);
+        }
+
+        .btn-small.active-mode {
+            background: var(--touch-blue);
+            color: #fff;
+            border-color: #93c5fd;
+            box-shadow: 0 0 10px rgba(29, 78, 216, 0.6);
+        }
+    </style>
+</head>
+<body id="main-body" onclick="handleGlobalClick(event)">
+
+    <div class="scan-overlay" id="scan-overlay"></div>
+
+    <div class="container" id="main-container">
+        <div class="header-row">
+            <button class="gear-btn" onclick="toggleColorPanel(event)">⚙️</button>
+            <div class="header-title">صلوات‌شمار معنوی</div>
+            
+            <div class="color-panel" id="color-panel">
+                <div class="color-dot" style="background: #d4af37;" onclick="changeTheme('#d4af37', '#8c6e18')"></div>
+                <div class="color-dot" style="background: #10b981;" onclick="changeTheme('#10b981', '#047857')"></div>
+                <div class="color-dot" style="background: #3b82f6;" onclick="changeTheme('#3b82f6', '#1d4ed8')"></div>
+                <div class="color-dot" style="background: #ec4899;" onclick="changeTheme('#ec4899', '#be185d')"></div>
+                <div class="color-dot" style="background: #a855f7;" onclick="changeTheme('#a855f7', '#7e22ce')"></div>
+            </div>
+        </div>
+
+        <div class="card" onclick="nextZekr(event)" style="cursor: pointer;" title="برای تغییر ذکر کلیک کنید">
+            <h3 id="day-name">ذکر امروز</h3>
+            <p id="daily-zekr">بارگذاری...</p>
+        </div>
+
+        <div class="target-box">
+            <span>هدف تعداد:</span>
+            <input type="number" id="target-input" value="100" onchange="updateTarget(event)">
+        </div>
+
+        <div class="counter-display" id="counter">0</div>
+
+        <!-- دکمه منفی برای کم کردن شمارش اشتباه -->
+        <button class="btn-minus" onclick="decrement(event)" title="کم کردن یک عدد">-</button>
+
+        <button class="btn-count" id="count-btn" onclick="increment(event)">شمارش</button>
+
+        <div class="controls-row">
+            <button class="btn-small" onclick="resetCounter(event)">صفر کردن</button>
+            <button class="btn-small" id="toggle-touch-btn" onclick="toggleTouchMode(event)">محدوده لمس</button>
+            <button class="btn-small" id="sound-btn" onclick="toggleSound(event)">صدا: روشن</button>
+        </div>
+    </div>
+
+    <script>
+        let count = parseInt(localStorage.getItem('salavat_count')) || 0;
+        let targetLimit = parseInt(localStorage.getItem('salavat_target')) || 100;
+        let isExpandedTouch = false;
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        // بازیابی مقادیر ذخیره شده در حافظه گوشی
+        document.getElementById('counter').innerText = count;
+        document.getElementById('target-input').value = targetLimit;
+
+        const savedTheme = localStorage.getItem('salavat_theme');
+        const savedShadow = localStorage.getItem('salavat_shadow');
+        if (savedTheme && savedShadow) {
+            document.documentElement.style.setProperty('--accent-color', savedTheme);
+            document.documentElement.style.setProperty('--btn-shadow', savedShadow);
+            document.documentElement.style.setProperty('--btn-gradient', `linear-gradient(145deg, ${savedTheme}, #222)`);
+        }
+
+        const zekrs = [
+            { day: "شنبه", zekr: "یا رب العالمين" },
+            { day: "یکشنبه", zekr: "یا ذاالجلال و الاکرام" },
+            { day: "دوشنبه", zekr: "یا قاضی الحاجات" },
+            { day: "سه‌شنبه", zekr: "یا ارحم الراحمین" },
+            { day: "چهارشنبه", zekr: "یا حی و یا قیوم" },
+            { day: "پنجشنبه", zekr: "لا اله الا الله الملک الحق المبین" },
+            { day: "جمعه", zekr: "اللهم صل علی محمد و آل محمد" }
+        ];
+
+        let currentZekrIndex = new Date().getDay();
+        function loadZekr() {
+            const z = zekrs[currentZekrIndex % zekrs.length];
+            document.getElementById('day-name').innerText = `ذکر روز (${z.day}) - لمس برای تغییر`;
+            document.getElementById('daily-zekr').innerText = z.zekr;
+        }
+        loadZekr();
+
+        function nextZekr(event) {
+            event.stopPropagation();
+            currentZekrIndex++;
+            loadZekr();
+        }
+
+        function increment(event) {
+            event.stopPropagation();
+            count++;
+            saveData();
+            
+            if (soundEnabled) playClickSound();
+            if (navigator.vibrate) navigator.vibrate(35); // ویبره کوتاه و خوش‌دست
+
+            if (count === targetLimit) {
+                if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            }
+
+            document.getElementById('counter').innerText = count;
+        }
+
+        function decrement(event) {
+            event.stopPropagation();
+            if (count > 0) {
+                count--;
+                saveData();
+                if (navigator.vibrate) navigator.vibrate(20);
+                document.getElementById('counter').innerText = count;
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('salavat_count', count);
+        }
+
+        function playClickSound() {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(650, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.04);
+            } catch (e) {}
+        }
+
+        function resetCounter(event) {
+            event.stopPropagation();
+            count = 0;
+            saveData();
+            document.getElementById('counter').innerText = count;
+        }
+
+        function updateTarget(event) {
+            event.stopPropagation();
+            let val = parseInt(document.getElementById('target-input').value);
+            if (!isNaN(val) && val > 0) {
+                targetLimit = val;
+                localStorage.setItem('salavat_target', targetLimit);
+            }
+        }
+
+        function toggleTouchMode(event) {
+            event.stopPropagation();
+            isExpandedTouch = !isExpandedTouch;
+            
+            const container = document.getElementById('main-container');
+            const body = document.getElementById('main-body');
+            const btn = document.getElementById('toggle-touch-btn');
+
+            if (isExpandedTouch) {
+                container.classList.add('wide-touch');
+                body.classList.add('expanded-touch');
+                btn.classList.add('active-mode');
+                btn.innerText = 'محدوده: روشن';
+            } else {
+                container.classList.remove('wide-touch');
+                body.classList.remove('expanded-touch');
+                btn.classList.remove('active-mode');
+                btn.innerText = 'محدوده لمس';
+            }
+        }
+
+        function handleGlobalClick(event) {
+            if (isExpandedTouch) {
+                if (!event.target.closest('button') && !event.target.closest('input') && !event.target.closest('.card') && !event.target.closest('.color-panel')) {
+                    increment(event);
+                }
+            }
+        }
+
+        function toggleSound(event) {
+            event.stopPropagation();
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-btn').innerText = soundEnabled ? 'صدا: روشن' : 'صدا: خاموش';
+        }
+
+        function toggleColorPanel(event) {
+            event.stopPropagation();
+            document.getElementById('color-panel').classList.toggle('show');
+        }
+
+        function changeTheme(mainColor, shadowColor) {
+            const overlay = document.getElementById('scan-overlay');
+            overlay.classList.remove('scan-active');
+            void overlay.offsetWidth;
+            overlay.classList.add('scan-active');
+
+            setTimeout(() => {
+                document.documentElement.style.setProperty('--accent-color', mainColor);
+                document.documentElement.style.setProperty('--btn-shadow', shadowColor);
+                document.documentElement.style.setProperty('--btn-gradient', `linear-gradient(145deg, ${mainColor}, #222)`);
+                
+                // ذخیره رنگ در حافظه گوشی
+                localStorage.setItem('salavat_theme', mainColor);
+                localStorage.setItem('salavat_shadow', shadowColor);
+            }, 300);
+
+            document.getElementById('color-panel').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
